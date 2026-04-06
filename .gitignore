@@ -28,17 +28,17 @@ env/
 *.ipynb_checkpoints
 
 # Data — never commit raw data
-data/
+/data/
 
-# Model weights & checkpoints
-models/
+# Model weights & checkpoints — root only
+/models/
 *.pth
 *.pt
 *.ckpt
 *.pkl
 
 # Figures & outputs
-figures/
+/figures/
 
 # macOS
 .DS_Store
