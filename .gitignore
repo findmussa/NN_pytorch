@@ -1,16 +1,69 @@
-# Python-generated files
+# Python
 __pycache__/
-*.py[oc]
-build/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
 dist/
+build/
+eggs/
+parts/
+var/
+sdist/
 wheels/
-*.egg-info
+pip-wheel-metadata/
 
-# Virtual environments
-.venv
+# Virtual environment
+.venv/
+venv/
+env/
 
-# large files
+# uv
+.uv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data — never commit raw data
 data/
+
+# Model weights & checkpoints
 models/
+*.pth
+*.pt
+*.ckpt
+*.pkl
+
+# Figures & outputs
 figures/
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# Distribution
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
