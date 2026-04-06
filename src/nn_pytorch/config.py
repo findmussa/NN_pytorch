@@ -20,15 +20,20 @@ FIG_DIR = ROOT/ 'figures'
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
-# training
+# model
+HIDDEN_LAYERS: list[int] = [224, 96]
+ACTIVATION: str = 'leaky_relu'
+
+# traininig
+LR: float =  4.715e-03
+BATCH_SIZE: int = 128
 EPOCHS: int = 500
-BATCH_SIZE: int = 32
-LR: float = 1e-3
 PATIENCE: int = 20
 
-# model
-H1: int = 64
-H2: int = 32
+# scheduler
+LR_FACTOR: float = 0.1393
+LR_PATIENCE: int = 11
+LR_MIN:float = 1e-6   # minimum LR
 
 # reproducubility
 RANDOM_STATE: int= 1

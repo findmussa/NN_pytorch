@@ -6,7 +6,7 @@ import joblib
 
 from nn_pytorch.data import load_data, split_data, scale_data, make_loaders
 import nn_pytorch.config as config
-from nn_pytorch.models.FNN import FNN
+from nn_pytorch.models.dynamic_FNN import FNN
 from nn_pytorch.trainer import train_one_epoch, evaluate
 from nn_pytorch.utils.device import get_device
 from nn_pytorch.plots import save_loss_plot
@@ -19,7 +19,7 @@ def main() -> None:
 
     X, y = load_data(config.DATA_DIR/'data.csv')
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y, random_state=config.RANDOM_STATE)
-    X_train_s, X_val_s, X_test_s, y_train_s, y_val_s, y_test_s, sX, sY = scale_data(X_train, X_val, X_test, y_train, y_val, y_test)
+    X_train_s, X_val_s, _, y_train_s, y_val_s, _, sX, sY = scale_data(X_train, X_val, X_test, y_train, y_val, y_test)
     train_loader, val_loader = make_loaders(X_train_s, X_val_s, y_train_s, y_val_s, batch_size=config.BATCH_SIZE, device=DEVICE)
 
     scalers = {'scaler_X': sX,
@@ -30,12 +30,20 @@ def main() -> None:
     out_feat = y_train_s.shape[1]
 
 
-    mdl = FNN(in_feat, config.H1, config.H2, out_feat).to(DEVICE)
+    mdl = FNN(in_feat, out_feat, config.HIDDEN_LAYERS, config.ACTIVATION).to(DEVICE)
     summary(mdl, input_size=(config.BATCH_SIZE, in_feat), device=DEVICE)
 
     criterion = nn.MSELoss()
     optimiser = torch.optim.Adam(mdl.parameters(), lr=config.LR)
 
+    # add scheduler
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimiser,
+        mode='min',                # minimize val loss
+        factor=config.LR_FACTOR,
+        patience=config.LR_PATIENCE,
+        min_lr=config.LR_MIN,
+    )
     train_losses = []
     val_losses = []
 
@@ -47,10 +55,12 @@ def main() -> None:
         val_loss = evaluate(mdl, val_loader, criterion)
         train_losses.append(train_loss)
         val_losses.append(val_loss)
-        
-        
+
+        scheduler.step(val_loss)
+        current_lr = optimiser.param_groups[0]['lr']    
+    
         if epoch % 10 == 0:
-            print(f"Epoch: {epoch} | train={train_loss:.4f} | val={val_loss:.4f}")
+            print(f"Epoch: {epoch} | train={train_loss:.4f} | val={val_loss:.4f} | lr={current_lr:.2e}")
         
         if val_loss < best_val_loss:
             best_val_loss = val_loss     
@@ -59,8 +69,8 @@ def main() -> None:
                 'model_state_dict': mdl.state_dict(),
                 'in_feat': in_feat,
                 'out_feat': out_feat,
-                'h1': config.H1,
-                'h2': config.H2}
+                'hideen_layers': config.HIDDEN_LAYERS,
+                'activation': config.ACTIVATION}
             torch.save(checkpoint, config.MODEL_DIR/'checkpoint.pth')
         else:
             counter += 1

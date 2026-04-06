@@ -4,7 +4,7 @@ from sklearn.metrics import r2_score, mean_absolute_error, root_mean_squared_err
 
 import nn_pytorch.config as config
 from nn_pytorch.data import load_data, split_data
-from nn_pytorch.models.FNN import FNN
+from nn_pytorch.models.dynamic_FNN import FNN
 from nn_pytorch.plots import save_parity_plot
 from nn_pytorch.utils.device import get_device
 
@@ -27,7 +27,7 @@ def main() -> None:
     y_test_s = sY.transform(y_test.reshape(-1, 1))
 
     # load model
-    mdl = FNN(checkpoint['in_feat'], checkpoint['h1'], checkpoint['h2'], checkpoint['out_feat']).to(DEVICE)
+    mdl = FNN(checkpoint['in_feat'], checkpoint['out_feat'], checkpoint['hideen_layers'], checkpoint['activation']).to(DEVICE)
     mdl.load_state_dict(checkpoint['model_state_dict'])
     mdl.eval()
     print('model loaded successfully')
