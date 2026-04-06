@@ -4,28 +4,28 @@ A clean, professional template for regression tasks using feedforward neural net
 
 ## Project Structure
 
-​```
+```
 nn-pytorch/
-    ├── scripts/
-    │   ├── train.py         # training entry point
-    │   ├── evaluate.py      # evaluation entry point
-    │   └── optimize.py      # hyperparameter optimisation
-    ├── src/nn_pytorch/
-    │   ├── config.py        # paths and hyperparameters
-    │   ├── data.py          # data loading, splitting, scaling
-    │   ├── trainer.py       # training and evaluation loops
-    │   ├── plots.py         # loss and parity plots
-    │   ├── models/
-    │   │   └── dynamic_FNN.py  # flexible feedforward neural network
-    │   └── utils/
-    │       └── device.py    # device detection (cpu/mps/cuda)
-    ├── data/                # raw data (not tracked)
-    ├── models/              # saved checkpoints and scalers (not tracked)
-    ├── figures/             # plots and outputs (not tracked)
-    ├── notebooks/           # exploratory notebooks
-    ├── pyproject.toml       # dependencies
-    └── uv.lock              # locked dependencies
-​```
+├── scripts/
+│   ├── train.py         # training entry point
+│   ├── evaluate.py      # evaluation entry point
+│   └── optimize.py      # hyperparameter optimisation
+├── src/nn_pytorch/
+│   ├── config.py        # paths and hyperparameters
+│   ├── data.py          # data loading, splitting, scaling
+│   ├── trainer.py       # training and evaluation loops
+│   ├── plots.py         # loss and parity plots
+│   ├── models/
+│   │   └── dynamic_FNN.py  # flexible feedforward neural network
+│   └── utils/
+│       └── device.py    # device detection (cpu/mps/cuda)
+├── data/                # raw data (not tracked)
+├── models/              # saved checkpoints and scalers (not tracked)
+├── figures/             # plots and outputs (not tracked)
+├── notebooks/           # exploratory notebooks
+├── pyproject.toml       # dependencies
+└── uv.lock              # locked dependencies
+```
 
 ## Setup
 
