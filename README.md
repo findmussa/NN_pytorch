@@ -3,6 +3,8 @@
 A clean, professional template for regression tasks using feedforward neural networks in PyTorch.
 
 ## Project Structure
+
+```
 nn-pytorch/
 ├── scripts/
 │   ├── train.py         # training entry point
@@ -22,7 +24,7 @@ nn-pytorch/
 ├── notebooks/           # exploratory notebooks
 ├── pyproject.toml       # dependencies
 └── uv.lock              # locked dependencies
-
+```
 
 ## Setup
 
@@ -88,11 +90,12 @@ H1                H2
 
 After training, results are saved to:
 - `models/checkpoint.pth` — best model weights + scalers
-- `figures/loss.png` — training and validation loss curves
-- `figures/parity.png` — predicted vs true values
+- `figures/loss.pdf` — training and validation loss curves
+- `figures/parity.pdf` — predicted vs true values
 
 ## Author
 
-**Nur** — Research Fellow, Trinity College Dublin  
+**Nur MM Kalimullah, PhD** — Research Fellow, Trinity College Dublin  
 GitHub: [@findmussa](https://github.com/findmussa)  
-Google Scholar: [findmussa](https://scholar.google.com/citations?user=findmussa)
+Google Scholar: [Nur MM Kalimullah](https://scholar.google.com/citations?user=yrrCtqwAAAAJ&hl=en)
+Web: (https://findmussa.github.io)
