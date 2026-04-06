@@ -1,6 +1,6 @@
 # Neural Network with PyTorch
 
-A clean, professional template for regression tasks using feedforward neural networks in PyTorch. Includes training, evaluation, and hyperparameter optimisation with Optuna.
+A clean template for regression tasks using feedforward neural networks in PyTorch. Includes training, evaluation, and hyperparameter optimisation with Optuna.
 
 ## Project Structure
 
@@ -31,24 +31,27 @@ nn-pytorch/
 
 **Requirements:** Python 3.11+, [uv](https://github.com/astral-sh/uv)
 
-​```bash
-# clone
+```bash
+# clone repository
 git clone https://github.com/findmussa/NN_pytorch.git
 cd NN_pytorch
 
 # install dependencies
 uv sync
-​```
+```
 
 ## Usage
 
 ### 1. Add Your Data
-```bash
-# place your CSV file at
+
+Place your dataset at:
+
+```
 data/data.csv
 ```
 
-The target column is `price` by default. Change in `src/nn_pytorch/data.py`:
+The target column is `price` by default. Update in `src/nn_pytorch/data.py` if needed:
+
 ```python
 X = df.drop('price', axis=1).values
 y = df['price'].values
@@ -57,6 +60,7 @@ y = df['price'].values
 ### 2. Configure
 
 Edit `src/nn_pytorch/config.py`:
+
 ```python
 # model
 HIDDEN_LAYERS = [64, 32]    # neurons per hidden layer
@@ -78,64 +82,75 @@ RANDOM_STATE  = 1
 ```
 
 ### 3. Train
+
 ```bash
 uv run python scripts/train.py
 ```
 
 Saves to `models/`:
-- `checkpoint.pth` — best model weights + architecture
-- `scalers.pkl` — fitted scalers
+
+* `checkpoint.pth` — best model weights + architecture
+* `scalers.pkl` — fitted scalers
 
 ### 4. Evaluate
+
 ```bash
 uv run python scripts/evaluate.py
 ```
 
 Prints test set metrics and saves to `figures/`:
-- `loss.pdf` — training and validation loss curves
-- `parity.png` — predicted vs true values
+
+* `loss.pdf` — training and validation loss curves
+* `parity.png` — predicted vs true values
 
 ### 5. Hyperparameter Optimisation (Optional)
+
 ```bash
 uv run python scripts/optimize.py
 ```
 
-Optimises using Optuna with TPE sampler and median pruner. Search space:
+Optimises using Optuna with TPE sampler and median pruner.
 
-| Parameter | Range |
-|---|---|
-| `n_layers` | 1 → 4 |
-| `hidden_size` per layer | 16 → 256 |
-| `activation` | relu, tanh, leaky_relu, elu, gelu |
-| `lr` | 1e-4 → 1e-2 |
-| `batch_size` | 16, 32, 64, 128 |
-| `lr_factor` | 0.1 → 0.5 |
-| `lr_patience` | 5 → 20 |
+**Search space:**
+
+| Parameter     | Range                             |
+| ------------- | --------------------------------- |
+| `n_layers`    | 1 → 4                             |
+| `hidden_size` | 16 → 256 (per layer)              |
+| `activation`  | relu, tanh, leaky_relu, elu, gelu |
+| `lr`          | 1e-4 → 1e-2                       |
+| `batch_size`  | 16, 32, 64, 128                   |
+| `lr_factor`   | 0.1 → 0.5                         |
+| `lr_patience` | 5 → 20                            |
 
 After optimisation, update `config.py` with the suggested values and retrain.
 
 ## Model
 
-Flexible feedforward neural network with configurable depth and activation:
-Input → [Linear → Activation] × n_layers → Linear → Output
+Flexible feedforward neural network:
+
+```
+Input → [Linear → Activation] × n_layers → Linear → Output (no activation)
+```
 
 Supports: `relu`, `tanh`, `leaky_relu`, `elu`, `gelu`, `sigmoid`
 
 ## Dependencies
 
-| Package | Purpose |
-|---|---|
-| PyTorch | deep learning framework |
-| NumPy | numerical computing |
-| Pandas | data loading |
-| scikit-learn | preprocessing, metrics |
-| Matplotlib | plotting |
-| torchinfo | model summary |
-| Optuna | hyperparameter optimisation |
-| joblib | scaler serialisation |
+| Package      | Purpose                     |
+| ------------ | --------------------------- |
+| PyTorch      | deep learning framework     |
+| NumPy        | numerical computing         |
+| Pandas       | data loading                |
+| scikit-learn | preprocessing, metrics      |
+| Matplotlib   | plotting                    |
+| torchinfo    | model summary               |
+| Optuna       | hyperparameter optimisation |
+| joblib       | scaler serialisation        |
 
 ## Workflow
 
+```
 optimize.py → find best hyperparameters
 ↓
 config.py   → update with best params
@@ -143,10 +158,11 @@ config.py   → update with best params
 train.py    → train final model
 ↓
 evaluate.py → metrics + plots
+```
 
 ## Author
 
-**Nur MM Kalimullah, PhD** — Research Fellow, Trinity College Dublin  
-GitHub: [@findmussa](https://github.com/findmussa)  
-Google Scholar: [Nur MM Kalimullah](https://scholar.google.com/citations?user=yrrCtqwAAAAJ&hl=en)
-Web: (https://findmussa.github.io)
+**Nur MM Kalimullah, PhD** — Research Fellow, Trinity College Dublin
+GitHub: https://github.com/findmussa
+Google Scholar: https://scholar.google.com/citations?user=yrrCtqwAAAAJ&hl=en
+Web: https://findmussa.github.io
