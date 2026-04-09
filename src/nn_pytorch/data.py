@@ -6,10 +6,10 @@ from sklearn.preprocessing import StandardScaler
 
 from torch.utils.data import TensorDataset, DataLoader
 
-def load_data(data_path: str):
+def load_data(data_path: str, target_col: str):
     df = pd.read_csv(data_path)
-    X = df.drop('price', axis=1).values
-    y = df['price'].values
+    X = df.drop(target_col, axis=1).values
+    y = df[target_col].values
     return X, y
 
 def split_data(X, y, random_state: int = 1):

@@ -1,44 +1,51 @@
 # Neural Network with PyTorch
 
-A clean template for regression tasks using feedforward neural networks in PyTorch. Includes training, evaluation, and hyperparameter optimisation with Optuna.
+A clean, reusable template for regression tasks using feedforward neural networks in PyTorch. Includes training, evaluation, and hyperparameter optimisation with Optuna.
+
+---
 
 ## Project Structure
 
-```
+```text
 nn-pytorch/
 ├── scripts/
-│   ├── train.py         # training entry point
-│   ├── evaluate.py      # evaluation entry point
-│   └── optimize.py      # hyperparameter optimisation
+│   ├── train.py            # training entry point
+│   ├── evaluate.py         # evaluation entry point
+│   └── optimize.py         # hyperparameter optimisation
 ├── src/nn_pytorch/
-│   ├── config.py        # paths and hyperparameters
-│   ├── data.py          # data loading, splitting, scaling
-│   ├── trainer.py       # training and evaluation loops
-│   ├── plots.py         # loss and parity plots
+│   ├── config.py           # hyperparameters and target column
+│   ├── data.py             # data loading, splitting, scaling
+│   ├── trainer.py          # training and evaluation loops
+│   ├── plots.py            # loss and parity plots
 │   ├── models/
 │   │   └── dynamic_FNN.py  # flexible feedforward neural network
 │   └── utils/
-│       └── device.py    # device detection (cpu/mps/cuda)
-├── data/                # raw data (not tracked)
-├── models/              # saved checkpoints and scalers (not tracked)
-├── figures/             # plots and outputs (not tracked)
-├── notebooks/           # exploratory notebooks
-├── pyproject.toml       # dependencies
-└── uv.lock              # locked dependencies
+│       ├── paths.py        # project root and directory paths
+│       └── device.py       # device detection (cpu/mps/cuda)
+├── data/                   # raw data (not tracked)
+├── models/                 # saved checkpoints and scalers (not tracked)
+├── figures/                # plots and outputs (not tracked)
+├── notebooks/              # exploratory notebooks
+├── pyproject.toml          # dependencies
+└── uv.lock                 # locked dependencies
 ```
+
+---
 
 ## Setup
 
 **Requirements:** Python 3.11+, [uv](https://github.com/astral-sh/uv)
 
 ```bash
-# clone repository
+# Clone repository
 git clone https://github.com/findmussa/NN_pytorch.git
 cd NN_pytorch
 
-# install dependencies
+# Install dependencies
 uv sync
 ```
+
+---
 
 ## Usage
 
@@ -46,22 +53,20 @@ uv sync
 
 Place your dataset at:
 
-```
+```text
 data/data.csv
 ```
 
-The target column is `price` by default. Update in `src/nn_pytorch/data.py` if needed:
-
-```python
-X = df.drop('price', axis=1).values
-y = df['price'].values
-```
+---
 
 ### 2. Configure
 
 Edit `src/nn_pytorch/config.py`:
 
 ```python
+# data
+TARGET_COL    = 'price'     # target column name in your CSV
+
 # model
 HIDDEN_LAYERS = [64, 32]    # neurons per hidden layer
 ACTIVATION    = 'relu'      # relu, tanh, leaky_relu, elu, gelu
@@ -74,12 +79,16 @@ PATIENCE      = 20          # early stopping patience
 
 # scheduler
 LR_FACTOR     = 0.5         # reduce LR by this factor
-LR_PATIENCE   = 10          # epochs to wait before reducing LR
+LR_PATIENCE   = 10          # epochs before reducing LR
 LR_MIN        = 1e-6        # minimum LR
 
 # reproducibility
 RANDOM_STATE  = 1
 ```
+
+**Note:** For a new dataset, you typically only need to update `TARGET_COL`.
+
+---
 
 ### 3. Train
 
@@ -87,10 +96,12 @@ RANDOM_STATE  = 1
 uv run python scripts/train.py
 ```
 
-Saves to `models/`:
+Outputs saved to `models/`:
 
 * `checkpoint.pth` — best model weights + architecture
-* `scalers.pkl` — fitted scalers
+* `scalers.pkl` — fitted preprocessing scalers
+
+---
 
 ### 4. Evaluate
 
@@ -98,10 +109,15 @@ Saves to `models/`:
 uv run python scripts/evaluate.py
 ```
 
-Prints test set metrics and saves to `figures/`:
+Outputs:
 
-* `loss.pdf` — training and validation loss curves
-* `parity.png` — predicted vs true values
+* Console: test set metrics
+* `figures/`:
+
+  * `loss.pdf` — training vs validation loss
+  * `parity.png` — predicted vs true values
+
+---
 
 ### 5. Hyperparameter Optimisation (Optional)
 
@@ -109,9 +125,12 @@ Prints test set metrics and saves to `figures/`:
 uv run python scripts/optimize.py
 ```
 
-Optimises using Optuna with TPE sampler and median pruner.
+Uses Optuna with:
 
-**Search space:**
+* **TPE sampler**
+* **Median pruner**
+
+#### Search Space
 
 | Parameter     | Range                             |
 | ------------- | --------------------------------- |
@@ -123,46 +142,71 @@ Optimises using Optuna with TPE sampler and median pruner.
 | `lr_factor`   | 0.1 → 0.5                         |
 | `lr_patience` | 5 → 20                            |
 
-After optimisation, update `config.py` with the suggested values and retrain.
+After optimisation:
+
+1. Update `config.py` with best parameters
+2. Retrain the model
+
+---
 
 ## Model
 
 Flexible feedforward neural network:
 
-```
-Input → [Linear → Activation] × n_layers → Linear → Output (no activation)
+```text
+Input → [Linear → Activation] × n_layers → Linear → Output
 ```
 
-Supports: `relu`, `tanh`, `leaky_relu`, `elu`, `gelu`, `sigmoid`
+* No activation on output layer (regression)
+* Supported activations:
+
+  * `relu`, `tanh`, `leaky_relu`, `elu`, `gelu`, `sigmoid`
+
+---
+
+## Path Resolution
+
+* Paths are resolved automatically from the project root
+* No hardcoded paths required
+* Root is detected via the `data/` directory
+* All required directories are created on first run
+
+---
 
 ## Dependencies
 
 | Package      | Purpose                     |
 | ------------ | --------------------------- |
-| PyTorch      | deep learning framework     |
-| NumPy        | numerical computing         |
-| Pandas       | data loading                |
-| scikit-learn | preprocessing, metrics      |
-| Matplotlib   | plotting                    |
-| torchinfo    | model summary               |
-| Optuna       | hyperparameter optimisation |
-| joblib       | scaler serialisation        |
+| PyTorch      | Deep learning framework     |
+| NumPy        | Numerical computing         |
+| Pandas       | Data handling               |
+| scikit-learn | Preprocessing & metrics     |
+| Matplotlib   | Plotting                    |
+| torchinfo    | Model summary               |
+| Optuna       | Hyperparameter optimisation |
+| joblib       | Scaler serialisation        |
+
+---
 
 ## Workflow
 
-```
+```text
 optimize.py → find best hyperparameters
-↓
+       ↓
 config.py   → update with best params
-↓
+       ↓
 train.py    → train final model
-↓
+       ↓
 evaluate.py → metrics + plots
 ```
 
+---
+
 ## Author
 
-**Nur MM Kalimullah, PhD** — Research Fellow, Trinity College Dublin
-GitHub: https://github.com/findmussa
-Google Scholar: https://scholar.google.com/citations?user=yrrCtqwAAAAJ&hl=en
-Web: https://findmussa.github.io
+**Nur MM Kalimullah, PhD**
+Research Fellow, Trinity College Dublin
+
+* GitHub: https://github.com/findmussa
+* Google Scholar: https://scholar.google.com/citations?user=yrrCtqwAAAAJ&hl=en
+* Website: https://findmussa.github.io

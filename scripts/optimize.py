@@ -5,6 +5,7 @@ from optuna.samplers import TPESampler
 
 # local import 
 from nn_pytorch.data import load_data, split_data, scale_data, make_loaders
+from nn_pytorch.utils.paths import DATA_DIR
 from nn_pytorch.models.dynamic_FNN import FNN
 from nn_pytorch.trainer import train_one_epoch, evaluate
 import nn_pytorch.config as config
@@ -12,7 +13,7 @@ from nn_pytorch.utils.device import get_device
 
 DEVICE = get_device()
 # data
-X, y = load_data(config.DATA_DIR/'data.csv')
+X, y = load_data(DATA_DIR/'data.csv', target_col=config.TARGET_COL)
 X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y, random_state= config.RANDOM_STATE)
 X_train_s, X_val_s, X_test_s, y_train_s, y_val_s, y_test_s, sX, sY = scale_data(X_train, X_val, X_test, y_train, y_val, y_test)
 

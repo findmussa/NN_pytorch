@@ -6,6 +6,7 @@ import joblib
 
 from nn_pytorch.data import load_data, split_data, scale_data, make_loaders
 import nn_pytorch.config as config
+from nn_pytorch.utils.paths import MODELS_DIR, DATA_DIR, FIG_DIR
 from nn_pytorch.models.dynamic_FNN import FNN
 from nn_pytorch.trainer import train_one_epoch, evaluate
 from nn_pytorch.utils.device import get_device
@@ -17,14 +18,14 @@ def main() -> None:
     DEVICE = get_device()
     print(f'Using device: {DEVICE}')
 
-    X, y = load_data(config.DATA_DIR/'data.csv')
+    X, y = load_data(DATA_DIR/'data.csv', target_col=config.TARGET_COL)
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y, random_state=config.RANDOM_STATE)
     X_train_s, X_val_s, _, y_train_s, y_val_s, _, sX, sY = scale_data(X_train, X_val, X_test, y_train, y_val, y_test)
     train_loader, val_loader = make_loaders(X_train_s, X_val_s, y_train_s, y_val_s, batch_size=config.BATCH_SIZE, device=DEVICE)
 
     scalers = {'scaler_X': sX,
                'scaler_Y': sY}
-    joblib.dump(scalers, config.MODEL_DIR/'scalers.pkl')
+    joblib.dump(scalers, MODELS_DIR/'scalers.pkl')
 
     in_feat = X_train_s.shape[1]
     out_feat = y_train_s.shape[1]
@@ -71,15 +72,15 @@ def main() -> None:
                 'out_feat': out_feat,
                 'hideen_layers': config.HIDDEN_LAYERS,
                 'activation': config.ACTIVATION}
-            torch.save(checkpoint, config.MODEL_DIR/'checkpoint.pth')
+            torch.save(checkpoint, MODELS_DIR/'checkpoint.pth')
         else:
             counter += 1
             if counter >= config.PATIENCE:
                 print(f"Early stopping at epoch: {epoch}")
                 break
 
-    save_loss_plot(train_losses, val_losses, config.FIG_DIR/'loss.pdf')
-    print(f"plots saved to {config.FIG_DIR}")
+    save_loss_plot(train_losses, val_losses, FIG_DIR/'loss.pdf')
+    print(f"plots saved to {FIG_DIR}")
 
 if __name__ == "__main__":
     main()
